@@ -1,7 +1,5 @@
 package com.fitmeal.project.entity;
 
-import java.math.BigDecimal;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
@@ -17,27 +15,27 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name ="FOOD_NUTRIENT")
+@Table(name = "MEAL_FOOD")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class FoodNutrient {
+public class MealFood {
 	
-	@EmbeddedId //다른 곳에 정의된 id 클래스를 포함
-	private FoodNutrientId id;
+	@EmbeddedId //복합키를 id로 사용
+	private MealFoodId id;
 	
-	@ManyToOne(fetch = FetchType.LAZY) //관계 설정 FoodNutrient 입장에서 Food는 다:1
-	@MapsId("foodId") //id클래스의 foodId 필드를 이 관계에 매핑
-	@JoinColumn(name = "FOOD_ID")
+	@MapsId("mealId")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "MEAL_ID", nullable = false)
+	private Meal meal;
+	
+	@MapsId("foodId")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "FOOD_ID", nullable = false)
 	private Food food;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@MapsId("nutrientId")
-	@JoinColumn(name = "NUTRIENT_ID")
-	private Nutrient nutrient;
-	
-	@Column(name ="AMOUNT", nullable = false)
-	private BigDecimal amount;
+	@Column(name = "AMOUNT", nullable = false)
+	private Double amount;
 
 }

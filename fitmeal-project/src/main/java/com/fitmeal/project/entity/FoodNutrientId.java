@@ -5,11 +5,13 @@ import java.util.Objects;
 
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Embeddable
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
 public class FoodNutrientId implements Serializable {
 	
 	private static final long serialVersionUID = 4285385835825L;

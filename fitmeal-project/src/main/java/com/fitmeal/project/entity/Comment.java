@@ -1,7 +1,5 @@
 package com.fitmeal.project.entity;
 
-import java.time.LocalDateTime;
-
 import com.fitmeal.project.common.BaseTimeEntity;
 
 import jakarta.persistence.Column;
@@ -14,40 +12,40 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "MEAL_LOG")
+@Table(name = "FM_COMMENT")
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class MealLog extends BaseTimeEntity {
+public class Comment extends BaseTimeEntity {
 	
 	@Id
-	@Column(name = "MEAL_LOG_ID")
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "meal_log_seq_generator")
-	@SequenceGenerator(name = "meal_log_seq_generator", sequenceName = "SEQ_MEAL_LOG_ID")
-	private Long mealLogId;
+	@Column(name = "COMMENT_ID")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "comment_seq_generator")
+	@SequenceGenerator(name = "comment_seq_generator", sequenceName = "SEQ_COMMENT_ID", allocationSize = 1)
+	private Long commentId;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "USER_ID")
+	@JoinColumn(name = "POST_ID", nullable = false)
+	private Post post;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "USER_ID", nullable = false)
 	private User user;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "FOOD_ID")
-	private Food food;
+	@Column(name = "CONTENT", nullable = false, length = 2000)
+	private String content;
 	
-	@Column(name = "INTAKE_AMOUNT")
-	private Long intakeAmount;
 	
-	@Column(name = "MEAL_TYPE")
-	private String mealType;
-	
-	@Column(name = "INTAKE_DATE", nullable = false)
-	private LocalDateTime intakeDate;
+	public void updateContent(String content) {
+		this.content = content;
+	}
 
 }

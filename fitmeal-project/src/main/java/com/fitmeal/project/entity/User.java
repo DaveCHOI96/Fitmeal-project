@@ -3,14 +3,18 @@ package com.fitmeal.project.entity;
 import java.time.LocalDate;
 
 import com.fitmeal.project.common.BaseTimeEntity;
+import com.fitmeal.project.common.UserRole;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,7 +23,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "FM_USER")
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
 public class User extends BaseTimeEntity {
@@ -39,8 +43,9 @@ public class User extends BaseTimeEntity {
 	@Column(name = "NICKNAME", nullable = false, unique = true)
 	private String nickName;
 	
+	@Enumerated(EnumType.STRING)
 	@Column(name = "USER_ROLE", nullable = false)
-	private String role;
+	private UserRole role;
 	
 	@Column(name = "USER_LEVEL", nullable = false)
 	private Integer level;
