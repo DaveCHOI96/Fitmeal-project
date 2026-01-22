@@ -28,6 +28,10 @@ import lombok.NoArgsConstructor;
 @Builder
 public class User extends BaseTimeEntity {
 	
+	public enum ProviderType {
+		LOCAL, KAKAO, NAVER, GOOGLE
+	}
+	
 	@Id
 	@Column(name = "USER_ID")
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq_generator")
@@ -68,6 +72,16 @@ public class User extends BaseTimeEntity {
 	@Column(name = "ACTIVITY_LEVEL")
 	private String activityLevel;
 	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "PROVIDER", nullable = false)
+	private ProviderType provider;
+	
+	@Column(name = "PROVIDER_ID")
+	private String providerId;
+	
+	@Column(length = 1000)
+	private String refreshToken;
+	
 	public void updateProfile(String nickName, Double height, Double weight, String activityLevel) {
 		this.nickName = nickName;
 		this.height = height;
@@ -77,6 +91,10 @@ public class User extends BaseTimeEntity {
 	
 	public void addExperience(Long exp) {
 		this.experience += exp;
+	}
+	
+	public void updateRefreshToken(String refreshToken) {
+		this.refreshToken = refreshToken;
 	}
 
 }

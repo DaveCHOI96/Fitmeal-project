@@ -2,9 +2,12 @@ package com.fitmeal.project.entity;
 
 import java.time.LocalDateTime;
 
+import org.hibernate.type.YesNoConverter;
+
 import com.fitmeal.project.common.BaseTimeEntity;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -48,6 +51,7 @@ public class Meal extends BaseTimeEntity {
 	private String mealName;
 	
 	@Column(name = "IS_PUBLIC", nullable = false)
+	@Convert(converter = YesNoConverter.class)
 	private boolean published;
 	
 	@Enumerated(EnumType.STRING)
