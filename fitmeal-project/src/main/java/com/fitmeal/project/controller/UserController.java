@@ -43,6 +43,13 @@ public class UserController {
 		return ResponseEntity.ok(tokenDto);
 	}
 	
+	@PostMapping("/logout")
+	public ResponseEntity<String> logout(@AuthenticationPrincipal org.springframework.security.core.userdetails.User principal) {
+		Long userId = Long.parseLong(principal.getUsername());
+		userService.logout(userId);
+		return ResponseEntity.ok("성공적으로 로그아웃 되었습니다.");
+	}
+	
 	@GetMapping("/me")
 	public ResponseEntity<String> getMyInfo(@AuthenticationPrincipal User user) {
 		// user.getUsername()은 우리가 JWT의 subject에 저장했던 '사용자 ID'를 반환합니다.

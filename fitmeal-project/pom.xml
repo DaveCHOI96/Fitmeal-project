@@ -43,6 +43,12 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
+    
+    <!-- Spring Security OAuth2 Client (소셜 로그인 담당 외교관) -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-oauth2-client</artifactId>
+</dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

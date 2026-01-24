@@ -81,7 +81,7 @@ public class JwtTokenProvider {
 		// 클레임에서 권한 정보 가져오기
 		Collection<? extends GrantedAuthority> authorities =
 				Arrays.stream(claims.get("role").toString().split(","))
-				.map(SimpleGrantedAuthority::new)
+				.map(role -> new SimpleGrantedAuthority("ROLE_" + role))
 				.collect(Collectors.toList());
 		
 		// UserDetails 객체를 만들어서 Authentication 리턴
