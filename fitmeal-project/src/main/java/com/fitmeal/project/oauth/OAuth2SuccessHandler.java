@@ -34,19 +34,14 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler{
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
 	    throws IOException, ServletException {
 		
-		//어떤 소셜 로그인(google/naver)'인지 알아내기 위한 준비를 합니다.
-		OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
-		String registrationId = oauthToken.getAuthorizedClientRegistrationId();
-		// 1. Spring Security의 인증 과정에서 생성된 OAuth2User 객체를 가져옵니다
+		
+		//Spring Security의 인증 과정에서 생성된 OAuth2User 객체를 가져옵니다
 		OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
+		String email = (String) oAuth2User.getAttributes().get("email");
 		
-		OAuthAttributes attributes = OAuthAttributes.of(registrationId, "id", oAuth2User.getAttributes());
 		
-		String uniqueEmail = attributes.getProvider().toLowerCase() + "_" + attributes.getOauthId() + "@social.fitmeal";
-		logger.info("OAuth2 로그인 성공. 사용자 이메일: {}", uniqueEmail);
-		
-		User user = userRepository.findByEmail(uniqueEmail)
-				.orElseThrow(() -> new IllegalArgumentException("소셜 로그인 사용자가 우리 DB에 존재하지 않습니다. email=" + uniqueEmail));
+		User user = userRepository.findByEmail(email)
+				.orElseThrow(() -> new IllegalArgumentException("OAuth2 인증 후 사용자를 DB에서 찾을 수 없습니다. email=" + email));
 		
 		String accessToken = jwtTokenProvider.createAccessToken(user);
 		logger.info("생성된 Access Token: {}", accessToken);

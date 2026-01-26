@@ -43,15 +43,21 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     	
     	OAuthAttributes attributes = OAuthAttributes.of(registrationId, userNameAttributeName, oAuth2User.getAttributes());
     	
-    	String uniqueEmail = attributes.getProvider().toLowerCase() + "_" + attributes.getOauthId() + "@social.fitmeal";
-    	User user = userRepository.findByEmail(uniqueEmail)
+    	
+    	 // [진단 코드!] 진짜 이메일이 잘 들어오는지 확인
+        System.out.println("====================================================");
+        System.out.println("LOGIN PLATFORM: " + registrationId);
+        System.out.println("USER REAL EMAIL: " + attributes.getEmail()); 
+        System.out.println("====================================================");
+    	
+    	User user = userRepository.findByEmail(attributes.getEmail())
     			.map(entity -> {
     				entity.update(attributes.getName(), attributes.getPicture());
     				return entity;
     			})
     			//만약 못 찾았다면(신규 회원), 새로운 User 객체를 생성합니다.
     			.orElse(attributes.toEntity());
-    	User savedUser = userRepository.saveAndFlush(user);
+    	userRepository.save(user);
     	
     	return new DefaultOAuth2User(
     			Collections.singleton(new SimpleGrantedAuthority(user.getRole().getKey())),

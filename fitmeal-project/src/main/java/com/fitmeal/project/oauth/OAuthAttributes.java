@@ -95,14 +95,15 @@ public class OAuthAttributes {
 	
 	//toEntity() 메소드가, 이제 '이메일 중복 방지'라는 막중한 임무를 수행합니다.
 	public User toEntity() {
-		String uniqueEmail = this.provider.toLowerCase() + "_" + this.oauthId + "@social.fitmeal";
+//		String uniqueEmail = this.provider.toLowerCase() + "_" + this.oauthId + "@social.fitmeal";
 		return User.builder()
 				.nickName(this.name) // 구글이든 네이버든, 받은 name을 닉네임으로 사용
-				.email(uniqueEmail) // [핵심!] 외부 이메일 대신, 우리가 만든 '가상 이메일'을 저장
+				.email(this.email) 
 				.picture(this.picture)
 				.password("SOCIAL_USER_PASSWORD_" + UUID.randomUUID().toString())
 				.role(UserRole.USER)
 				.provider(User.ProviderType.valueOf(this.provider.toUpperCase()))
+				.providerId(this.oauthId)
 				.level(1)
 				.experience(0L)
 				.build();
