@@ -2,6 +2,7 @@ package com.fitmeal.project.service;
 
 
 import java.util.List;
+import java.util.Random;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -40,16 +41,14 @@ public class UserService {
     	if (userRepository.existsByEmail(requestDto.getEmail())) {
     		throw new IllegalArgumentException("이미 사용 중인 이메일 입니다.");
     	}
-    	if (userRepository.existsByNickName(requestDto.getNickName())) {
-    		throw new IllegalArgumentException("이미 사용 중인 닉네임 입니다.");
-    	}
     	
+    	String taggedNickName = generateTaggedNickName(requestDto.getNickName());
     	String encryptedPassword = passwordEncoder.encode(requestDto.getPassword());
     	
     	User newUser = User.builder()
     			.email(requestDto.getEmail())
     			.password(encryptedPassword)
-    			.nickName(requestDto.getNickName())
+    			.nickName(taggedNickName)
     			.provider(User.ProviderType.LOCAL)
     			.role(UserRole.USER)
     			.level(1)
@@ -130,6 +129,23 @@ public class UserService {
 			throw new IllegalStateException("이미 존재하는 이메일입니다.");
 		}
 		return userRepository.save(user);
+	}
+	
+	public String generateTaggedNickName(String baseNickName) {
+
+	    if (baseNickName == null || baseNickName.isBlank()) {
+	        baseNickName = "user";
+	    }
+
+	    Random random = new Random();
+	    String candidate;
+
+	    do {
+	        int tag = random.nextInt(10_000); // 0 ~ 9999
+	        candidate = String.format("%s#%04d", baseNickName, tag);
+	    } while (userRepository.existsByNickName(candidate));
+
+	    return candidate;
 	}
 	
 	

@@ -1,6 +1,7 @@
 package com.fitmeal.project.oauth;
 
 import java.util.Map;
+import java.util.Random;
 import java.util.UUID;
 
 import com.fitmeal.project.common.UserRole;
@@ -108,6 +109,7 @@ public class OAuthAttributes {
 				.experience(0L)
 				.build();
 	}
+	
 	
 
 }

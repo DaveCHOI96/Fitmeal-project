@@ -105,5 +105,10 @@ public class User extends BaseTimeEntity {
 		this.picture = picture;
 		return this;
 	}
+	
+	// 새로 추가: 닉네임 태그 업데이트
+    public void updateNickName(String taggedNickName) {
+        this.nickName = taggedNickName;
+    }
 
 }

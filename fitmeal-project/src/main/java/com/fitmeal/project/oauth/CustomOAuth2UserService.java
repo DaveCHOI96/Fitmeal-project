@@ -14,6 +14,7 @@ import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 
 import com.fitmeal.project.entity.User;
 import com.fitmeal.project.repository.UserRepository;
+import com.fitmeal.project.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 	private final UserRepository userRepository;
+	private final UserService userService;
 	
 	@Override
 	@Transactional
@@ -49,15 +51,23 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         System.out.println("LOGIN PLATFORM: " + registrationId);
         System.out.println("USER REAL EMAIL: " + attributes.getEmail()); 
         System.out.println("====================================================");
-    	
-    	User user = userRepository.findByEmail(attributes.getEmail())
-    			.map(entity -> {
-    				entity.update(attributes.getName(), attributes.getPicture());
-    				return entity;
-    			})
-    			//만약 못 찾았다면(신규 회원), 새로운 User 객체를 생성합니다.
-    			.orElse(attributes.toEntity());
-    	userRepository.save(user);
+        
+        
+        
+        User user = userRepository.findByEmail(attributes.getEmail())
+                .map(existingUser -> {
+                    existingUser.update(attributes.getName(), attributes.getPicture());
+                    return existingUser;
+                })
+                .orElseGet(() -> {
+                    User newUser = attributes.toEntity();
+                    // 태그 닉네임 적용
+                    String taggedNickName = userService.generateTaggedNickName(attributes.getName());
+                    newUser.updateNickName(taggedNickName); // Setter 대신 엔티티 메서드 사용
+                    return newUser;
+                });
+
+        userRepository.save(user);
     	
     	return new DefaultOAuth2User(
     			Collections.singleton(new SimpleGrantedAuthority(user.getRole().getKey())),
