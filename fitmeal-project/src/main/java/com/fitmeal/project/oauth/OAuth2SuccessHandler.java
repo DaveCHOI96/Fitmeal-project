@@ -34,11 +34,18 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler{
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
 	    throws IOException, ServletException {
 		
+	    OAuth2AuthenticationToken token = (OAuth2AuthenticationToken) authentication;
+	    OAuth2User oAuth2User = token.getPrincipal();
 		
-		//Spring Security의 인증 과정에서 생성된 OAuth2User 객체를 가져옵니다
-		OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
-		String email = (String) oAuth2User.getAttributes().get("email");
-		
+	    String registrationId = token.getAuthorizedClientRegistrationId();
+	    
+	    OAuthAttributes attributes = OAuthAttributes.of(registrationId, oAuth2User.getName(), oAuth2User.getAttributes());
+	    String email = attributes.getEmail();
+	    
+	    if (email == null) {
+	    	logger.error("OAuth2 인증 후 이메일을 가져올 수 없습니다. Attributes: {}", attributes.getAttributes());
+	    	throw new IllegalArgumentException("소셜 로그인 정보에 이메일이 포함되어 있지 않습니다.");
+	    }
 		
 		User user = userRepository.findByEmail(email)
 				.orElseThrow(() -> new IllegalArgumentException("OAuth2 인증 후 사용자를 DB에서 찾을 수 없습니다. email=" + email));

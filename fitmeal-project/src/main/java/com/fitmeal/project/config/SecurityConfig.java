@@ -5,8 +5,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -31,13 +29,14 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http
-		//1. CSRF(Cross-Site Request Forgery ) 보호 비활성화
+		//CSRF(Cross-Site Request Forgery ) 보호 비활성화
 		.csrf(csrf -> csrf.disable())
 		.httpBasic(httpBasic -> httpBasic.disable())
 		.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 		.authorizeHttpRequests(authz -> authz
 				.requestMatchers("/", "/login/**", "/oauth2/**").permitAll()
 				.requestMatchers("/api/users/signup", "/api/users/login", "/api/auth/reissue").permitAll()
+				.requestMatchers("/api/users/email/**").permitAll()
 				.requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
 				.anyRequest().hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
 				)

@@ -22,19 +22,24 @@ public class UserService {
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final JwtTokenProvider jwtTokenProvider;
+	private final EmailService emailService;
 	
-	public UserService(UserRepository userRepository, JwtTokenProvider jwtTokenProvider) {
+	public UserService(UserRepository userRepository, JwtTokenProvider jwtTokenProvider, EmailService emailService) {
 		this.userRepository = userRepository;
 		this.jwtTokenProvider = jwtTokenProvider;
 		this.passwordEncoder = new BCryptPasswordEncoder();
+		this.emailService = emailService;
 	}
 	
 	@Transactional
     public Long signup(UserSignupRequestDto requestDto) {
+		
+		if (!emailService.isEmailVerified(requestDto.getEmail())) {
+			throw new IllegalArgumentException("이메일 인증이 완료되지 않았습니다.");
+		}
     	if (userRepository.existsByEmail(requestDto.getEmail())) {
     		throw new IllegalArgumentException("이미 사용 중인 이메일 입니다.");
     	}
-    	
     	if (userRepository.existsByNickName(requestDto.getNickName())) {
     		throw new IllegalArgumentException("이미 사용 중인 닉네임 입니다.");
     	}
@@ -52,6 +57,8 @@ public class UserService {
     			.build();
     	
     	User savedUser = userRepository.save(newUser);
+    	
+    	emailService.removeVerificationMark(requestDto.getEmail());
     	return savedUser.getUserId();
     }
 	
@@ -106,6 +113,25 @@ public class UserService {
 		userRepository.save(user);
 		return token;
 	}
+	
+	//이메일 중복 체크 메서드
+	public boolean isEmailDuplicate(String email) {
+		return userRepository.existsByEmail(email);
+	}
+	
+	//닉네임 중복 체크 메서드
+	public boolean isNickNameDuplicate(String nickName) {
+		return userRepository.existsByNickName(nickName);
+	}
+	
+	//실제 회원가입 처리 메서드
+	public User join(User user) {
+		if (userRepository.existsByEmail(user.getEmail())) {
+			throw new IllegalStateException("이미 존재하는 이메일입니다.");
+		}
+		return userRepository.save(user);
+	}
+	
 	
 
 }
