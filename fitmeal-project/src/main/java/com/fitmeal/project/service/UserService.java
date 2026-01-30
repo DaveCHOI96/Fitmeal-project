@@ -26,10 +26,10 @@ public class UserService {
 	private final JwtTokenProvider jwtTokenProvider;
 	private final EmailService emailService;
 	
-	public UserService(UserRepository userRepository, JwtTokenProvider jwtTokenProvider, EmailService emailService) {
+	public UserService(UserRepository userRepository, JwtTokenProvider jwtTokenProvider, EmailService emailService, PasswordEncoder passwordEncoder) {
 		this.userRepository = userRepository;
 		this.jwtTokenProvider = jwtTokenProvider;
-		this.passwordEncoder = new BCryptPasswordEncoder();
+		this.passwordEncoder = passwordEncoder;
 		this.emailService = emailService;
 	}
 	

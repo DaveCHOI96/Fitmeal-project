@@ -110,5 +110,9 @@ public class User extends BaseTimeEntity {
     public void updateNickName(String taggedNickName) {
         this.nickName = taggedNickName;
     }
+    
+    public void updatePassword(String encodedPassword) {
+    	this.password = encodedPassword;
+    }
 
 }

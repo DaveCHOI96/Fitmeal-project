@@ -61,9 +61,12 @@ public class OAuthAttributes {
 		 // 그리고, 그 'kakao_account' 꾸러미 안에, 또 'profile' 이라는 꾸러미가 들어있습니다. (이중 포장)
 		Map<String, Object> kakaoProfile = (Map<String, Object>) kakaoAccount.get("profile");
 		
+		String oauthId = String.valueOf(attributes.get("id"));
+		String email = "kakao_" + oauthId + "@fitmeal.social";
+		
 		return OAuthAttributes.builder()
 				.name((String) kakaoProfile.get("nickname"))
-				.email((String) kakaoAccount.get("email"))
+				.email(email) 
 				.picture((String) kakaoProfile.get("profile_image_url"))
 				.provider("kakao")
 				// 카카오의 고유 ID는, 'attributes' 전체 꾸러미의 'id' 키에, Long 타입으로 들어있습니다.

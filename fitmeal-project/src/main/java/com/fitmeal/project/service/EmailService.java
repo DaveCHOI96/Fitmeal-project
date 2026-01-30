@@ -73,5 +73,23 @@ public class EmailService {
 	public void removeVerificationMark(String email) {
 		redisTemplate.delete(AUTH_SUCCESS_PREFIX + email);
 	}
+	
+	public void sendTempPassword(String email, String tempPassword) {
+		String subject = "[FitMeal] 임시 비밀번호 안내";
+	    String content = """
+	        안녕하세요. FitMeal 입니다.
+
+	        요청하신 임시 비밀번호는 아래와 같습니다.
+
+	        임시 비밀번호: %s
+
+	        로그인 후 반드시 비밀번호를 변경해주세요.
+	        """.formatted(tempPassword);
+	    SimpleMailMessage message = new SimpleMailMessage();
+	    message.setTo(email);
+	    message.setSubject(subject);
+	    message.setText(content);
+	    mailSender.send(message);
+	}
 
 }
