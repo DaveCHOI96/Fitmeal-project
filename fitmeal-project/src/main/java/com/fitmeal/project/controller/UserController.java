@@ -1,19 +1,26 @@
 package com.fitmeal.project.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fitmeal.project.dto.ProfileVisibilityUpdateRequest;
 import com.fitmeal.project.dto.TokenResponseDto;
+import com.fitmeal.project.dto.UserSearchDto;
 import com.fitmeal.project.dto.UserSignupRequestDto;
+import com.fitmeal.project.security.CustomUserDetails;
 import com.fitmeal.project.service.EmailService;
+import com.fitmeal.project.service.UserQueryService;
 import com.fitmeal.project.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -22,9 +29,12 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class UserController {
+
+    private final UserQueryService userQueryService;
 	
 	private final UserService userService;
 	private final EmailService emailService;
+
 	
 	@PostMapping("/signup")
 	public ResponseEntity<String> signup(@RequestBody UserSignupRequestDto requestDto) {
@@ -85,5 +95,22 @@ public class UserController {
 			return ResponseEntity.badRequest().body("인증 코드가 일치하지 않거나 만료되었습니다");
 		}
 	}
+	
+	@PatchMapping("/me/profile-visibility")
+	public void updateProfileVisibility(
+			@AuthenticationPrincipal CustomUserDetails userDetails,
+			@RequestBody ProfileVisibilityUpdateRequest request) {
+		
+		userService.updateProfileVisibility(userDetails.getUserId(), request.getProfileVisibility());
+	}
+	
+	@GetMapping("/search")
+	public List<UserSearchDto> search(
+			@RequestParam String nickName,
+			@AuthenticationPrincipal CustomUserDetails userDetails) {
+		
+		return userQueryService.searchByNickname(nickName, userDetails.getRole());
+	}
+	
 
 }

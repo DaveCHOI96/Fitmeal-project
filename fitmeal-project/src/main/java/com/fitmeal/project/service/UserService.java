@@ -4,11 +4,11 @@ package com.fitmeal.project.service;
 import java.util.List;
 import java.util.Random;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fitmeal.project.common.ProfileVisibility;
 import com.fitmeal.project.common.UserRole;
 import com.fitmeal.project.config.JwtTokenProvider;
 import com.fitmeal.project.dto.TokenResponseDto;
@@ -175,6 +175,12 @@ public class UserService {
         //반복문에서 통과한 최종 닉네임 반환
 	    return candidate;
 	}
+	
+	public void updateProfileVisibility(Long userId, ProfileVisibility visibility) {
+        User user = userRepository.findById(userId)
+                .orElseThrow();
+        user.changeProfileVisibility(visibility);
+    }
 	
 	
 

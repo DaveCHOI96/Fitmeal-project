@@ -3,6 +3,7 @@ package com.fitmeal.project.entity;
 import java.time.LocalDate;
 
 import com.fitmeal.project.common.BaseTimeEntity;
+import com.fitmeal.project.common.ProfileVisibility;
 import com.fitmeal.project.common.UserRole;
 
 import jakarta.persistence.Column;
@@ -85,6 +86,11 @@ public class User extends BaseTimeEntity {
 	@Column(length = 1000)
 	private String refreshToken;
 	
+	@Enumerated(EnumType.STRING)
+	@Column(length = 50)
+	@Builder.Default
+	private ProfileVisibility profileVisibility = ProfileVisibility.PUBLIC;;
+	
 	public void updateProfile(String nickName, Double height, Double weight, String activityLevel) {
 		this.nickName = nickName;
 		this.height = height;
@@ -113,6 +119,10 @@ public class User extends BaseTimeEntity {
     
     public void updatePassword(String encodedPassword) {
     	this.password = encodedPassword;
+    }
+    
+    public void changeProfileVisibility(ProfileVisibility visibility) {
+        this.profileVisibility = visibility;
     }
 
 }

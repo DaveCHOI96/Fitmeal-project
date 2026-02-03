@@ -1,11 +1,13 @@
 package com.fitmeal.project.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.fitmeal.project.common.ProfileVisibility;
 import com.fitmeal.project.entity.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -26,5 +28,14 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	Optional<User> findByEmail(String email);
 	
 	Optional<User> findByRefreshToken(String refreshToken);
+	
+	//닉네임 검색(USER - PUBLIC)
+	List<User> findByNickNameContainingAndProfileVisibility(
+            String nickName,
+            ProfileVisibility profileVisibility
+    );
+	//닉네임 검색 (ADMIN - ALL)
+	List<User> findByNickNameContaining(String nickName);
+	
 
 }
